@@ -1,0 +1,101 @@
+/*
+一. 二分查找的核心思想
+二分查找（Binary Search）是一种高效的搜索算法，仅适用于有序数组。其核心思想包括以下几个步骤：
+   1. 分割（Divide）：
+        -在查找目标值时，将数组分为左右两部分，定位中间元素并与目标值进行比较。
+   2. 缩小范围（Conquer）：
+        -如果目标值小于中间元素，只需在左半部分继续查找；如果目标值大于中间元素，则只需在右半部分继续查找。
+   3. 递归查找或迭代：
+        -重复分割和缩小范围的过程，直到找到目标值，或者范围缩小为空（未找到目标值）。
+二. 时间复杂度
+    1.最坏情况：O(log n)
+        -在每次迭代中，数组规模减半，因此查找复杂度为对数级别。
+    2.最好情况：O(1)
+        -如果目标值是中间元素，仅需一次比较即可找到目标值。
+    3.平均情况：O(log n)
+        -随机分布的目标值，平均时间复杂度与最坏情况相同。
+三. 空间复杂度
+    1.迭代实现：O(1)
+        -仅使用常量空间，不需要额外存储。
+    2.递归实现：O(log n)
+        -递归调用的栈空间最多为 log n，与查找深度相等。
+四. 优点
+    1.效率高：
+        -相较于线性查找，二分查找的查找效率更高，尤其在大规模有序数据中表现优秀。
+    2.简单实现：
+        -逻辑简单，易于实现和理解。
+    3.适用范围广：
+        -适用于查找任意可排序数据结构中的目标值。
+五. 缺点
+    1.需要有序数据：
+        -二分查找仅适用于已经排序的数组，未排序的数据需额外排序后再查找。
+    2.不适合动态数据：
+        -在数据频繁插入、删除的场景下，保持有序的开销较大。
+    3.对链表效率低：
+        -二分查找需要随机访问元素，不适合链表等线性数据结构。
+六. 适用场景
+    1.静态有序数据集：
+        -在不需要频繁修改的数据中查找目标值，如字典、索引表等。
+    2.范围查找：
+        -快速定位目标范围或值所在的区间。
+    3.大规模数据场景：
+        -适用于需要在大规模排序数组中频繁查找的应用场景。
+*/
+#include <stdio.h>
+// 二分查找 - 迭代实现
+int binarySearchIterative(int arr[], int size, int target) {
+    int left = 0, right = size - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2; // 防止溢出
+        if (arr[mid] == target) {
+            return mid; // 找到目标值，返回索引
+        }
+        if (arr[mid] < target) {
+            left = mid + 1; // 目标值在右半部分
+        } else {
+            right = mid - 1; // 目标值在左半部分
+        }
+    }
+    return -1; // 未找到目标值
+}
+// 二分查找 - 递归实现
+int binarySearchRecursive(int arr[], int left, int right, int target) {
+    if (left > right) {
+        return -1; // 未找到目标值
+    }
+    int mid = left + (right - left) / 2; // 防止溢出写法
+    if (arr[mid] == target) {
+        return mid; // 找到目标值，返回索引
+    }
+    if (arr[mid] < target) {
+        return binarySearchRecursive(arr, mid + 1, right, target); // 搜索右半部分
+    } else {
+        return binarySearchRecursive(arr, left, mid - 1, target); // 搜索左半部分
+    }
+}
+int main() {
+    int arr[] = {2, 4, 6, 8, 10, 12, 14};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int target;
+
+    printf("请输入要查找的数字: ");
+    scanf("%d", &target);
+
+    // 迭代实现调用
+    int iterativeResult = binarySearchIterative(arr, size, target);
+    if (iterativeResult != -1) {
+        printf("数字 %d 在数组中的索引位置为: %d (迭代实现)\n", target, iterativeResult);
+    } else {
+        printf("数字 %d 未在数组中找到。(迭代实现)\n", target);
+    }
+
+    // 递归实现调用
+    int recursiveResult = binarySearchRecursive(arr, 0, size - 1, target);
+    if (recursiveResult != -1) {
+        printf("数字 %d 在数组中的索引位置为: %d (递归实现)\n", target, recursiveResult);
+    } else {
+        printf("数字 %d 未在数组中找到。(递归实现)\n", target);
+    }
+
+    return 0;
+}
